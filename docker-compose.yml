@@ -1,0 +1,27 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./backend:/code
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./frontend:/code
+      - ./frontend/.pnpm-store:/code/.pnpm-store
+      - /code/node_modules
+
+  proxy:
+    image: caddy:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - frontend
+      - backend
